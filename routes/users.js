@@ -16,10 +16,24 @@ const Connection = async ()=>{
 Connection();
 
 const userSchema = mongoose.Schema({
-  username:String,
-  name:String,
-  email:String,
-  password:String,
+  username:{
+    type:String,
+    required:true,
+    unique:true
+  },
+  name:{
+    type:String,
+    required:true
+  },
+  email:{
+    type:String,
+    required:true,
+    unique:true
+  },
+  password:{
+    type:String,
+    required:true
+  },
   profileImage:String,
   bio:String,
   posts:[{type:mongoose.Schema.Types.ObjectId,ref:"post"}],

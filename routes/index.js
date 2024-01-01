@@ -9,11 +9,11 @@ const upload = require('./multer');
 passport.use(new localStrategy(userModel.authenticate()));
 
 router.get('/', function(req, res) {
-  res.render('index', {footer: false});
+  res.render('index', {footer: false,error: req.flash('error')});
 });
 
 router.get('/login', function(req, res) {
-  res.render('login', {footer: false});
+  res.render('login', {footer: false,error:req.flash('error')});
 });
 
 router.get('/feed', isLoggedIn, async function(req, res) {
@@ -73,7 +73,13 @@ router.get('/profile/:username', isLoggedIn, async function(req,res){
 })
 
 router.post('/register',function(req,res,next){
-  const userData = new userModel({
+
+  if (!req.body.username || !req.body.name || !req.body.email || !req.body.password) {
+    req.flash('error', 'All fields are required');
+    return res.redirect('/');
+  }
+
+  const userData = new userModel({  
     username:req.body.username,
     name:req.body.name,
     email:req.body.email,
@@ -85,11 +91,17 @@ router.post('/register',function(req,res,next){
       res.redirect("/profile");
     })
   })
+  .catch(function (err) {
+    // Handle registration failure (e.g., username/email already taken)
+    req.flash('error', 'Registration failed. Please choose a different username or email.');
+    res.redirect('/');
+  });
 });
 
 router.post('/login', passport.authenticate("local",{
   successRedirect:"/profile",
-  failureRedirect:"/login"
+  failureRedirect:"/login",
+  failureFlash:true
 }), function(req,res){
 });
 
