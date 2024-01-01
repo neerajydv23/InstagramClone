@@ -32,7 +32,7 @@ const userSchema = mongoose.Schema({
   },
   password:{
     type:String,
-    required:true
+    required:true,
   },
   profileImage:String,
   bio:String,
